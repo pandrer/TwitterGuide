@@ -1,4 +1,5 @@
 import tweepy
+import json
 
 consumer_key: str = 'p8Ikar02jTcyaPNjiKbDFkOZC'
 consumer_secret: str = 'kJSHrd9zAL5scnzCeE1Zcpje90EKXNT4rhuYbf2P6UFwUZht3B'
@@ -12,9 +13,19 @@ api = tweepy.API(auth)
 # Guardamos los 20 tweets del timeline
 public_tweets = api.home_timeline()
 # Recorremos y mostramos por pantalla
+
+
+def pp_json(json_thing, sort=True, indents=4):
+    if type(json_thing) is str:
+        print(json.dumps(json.loads(json_thing), sort_keys=sort, indent=indents))
+    else:
+        print(json.dumps(json_thing, sort_keys=sort, indent=indents))
+    return None
+
+
 for tweet in public_tweets:
     print('/**************************tweet**************************/')
-    print(tweet.text)
+    pp_json(tweet._json)
 
 user = api.get_user('PandreringPablo')
 # Imprime el nombre del usuario por pantalla
@@ -24,3 +35,8 @@ print(user.followers_count)
 # Imprime su lista de seguidores
 for friend in user.friends():
     print(friend.screen_name)
+    friend_chain = api.get_user(friend.screen_name)
+    for friend_of_my_friend in friend_chain.friends():
+        print('\t')
+        print(friend_of_my_friend.screen_name)
+
